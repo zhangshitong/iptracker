@@ -91,8 +91,6 @@ public class IpTrackerController{
                              Object lon0 = result.getOrDefault("lon", "");
                              String lon = lon0.toString();
                              String as = result.getOrDefault("as", "");
-
-
                              ipInfo.setTimezone(timezone);
                              ipInfo.setCountry(country);
                              ipInfo.setCountryCode(countryCode);
@@ -103,9 +101,8 @@ public class IpTrackerController{
                              ipInfo.setAs(as);
                              ipInfo.setLon(lon);
                              ipInfo.setLat(lat);
-
                          }
-                         ipInfo.setTimestamp(getCurrentTime(null));
+                         ipInfo.setTimestamp(getCurrentTime(ipInfo.getTimezone()));
                          nameIps.put(name, ipInfo);
                      }
                  });

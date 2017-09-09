@@ -37,22 +37,15 @@ public class ITrackerApplicationStarted implements ApplicationListener<Applicati
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
         if("client".equalsIgnoreCase(mode) && !StringUtils.isEmpty(serverUrl)){
-            try {
-                Executor.run(new Runnable() {
+                Executor.fixedRate(new Runnable() {
                     @Override
                     public void run() {
                         LOG.info("start to run retry.");
                         String url = serverUrl + "/try/{clientname}";
                         restTemplate.getForObject(url, String.class, trackerClientName);
+                        LOG.info("run retry complete.");
                     }
-                }, 5, TimeUnit.MINUTES);
-            } catch (InterruptedException e) {
-                LOG.error("", e);
-            } catch (ExecutionException e) {
-                LOG.error("", e);
-            } catch (TimeoutException e) {
-                LOG.error("", e);
-            }
+                }, 1, 5 * 60 );
         }
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -118,8 +119,9 @@ public class IpTrackerController{
         if(!StringUtils.isEmpty(timezone)){
             shanghai = ZoneId.of(timezone);
         }
-        LocalDateTime localtDateAndTime = LocalDateTime.now();
-        ZonedDateTime dateAndTimeInNewYork  = ZonedDateTime.of(localtDateAndTime, shanghai);
+        LocalDateTime localtDateAndTime = LocalDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime dateAndTimeInUTC = localtDateAndTime.atZone(ZoneId.of("UTC"));
+        ZonedDateTime dateAndTimeInNewYork  = dateAndTimeInUTC.withZoneSameInstant(shanghai);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z");
         String formatedDataTime = dateAndTimeInNewYork.format(formatter);
         LOG.info("formatedDataTime "+formatedDataTime);

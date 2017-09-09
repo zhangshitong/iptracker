@@ -30,25 +30,16 @@ import java.util.concurrent.TimeUnit;
  * Created by STZHANG on 2017/9/9.
  */
 @Controller
-public class IpTrackerController implements InitializingBean{
+public class IpTrackerController{
     private static Logger LOG = LoggerFactory.getLogger(Executor.class);
 
     private AsyncRestTemplate asyncRestTemplate = new AsyncRestTemplate();
 
-    private RestTemplate restTemplate = new RestTemplate();
 
     private Map<String, IpInfo> nameIps = new HashMap<>();
 
     private static ExecutorService executor = Executors.newFixedThreadPool(2);
 
-    @Value("${tracker.mode:server}")
-    private String mode;
-
-    @Value("${tracker.server.url:}")
-    private String serverUrl = null;
-
-    @Value("${tracker.client.name:default")
-    private String trackerClientName = null;
 
     @RequestMapping("/track/{name}")
     @ResponseBody
@@ -136,17 +127,4 @@ public class IpTrackerController implements InitializingBean{
     }
 
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if("client".equalsIgnoreCase(mode) && !StringUtils.isEmpty(serverUrl)){
-            Executor.run(new Runnable() {
-                @Override
-                public void run() {
-                    LOG.info("start to run retry.");
-                    String url = serverUrl + "/try/{clientname}";
-                    restTemplate.getForObject(url, String.class, trackerClientName);
-                }
-            }, 5, TimeUnit.MINUTES);
-        }
-    }
 }
